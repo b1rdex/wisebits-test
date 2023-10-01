@@ -4,6 +4,7 @@ namespace App\Tests\UserModule;
 
 use App\UserModule\Dto\UserCreateDto;
 use App\UserModule\Dto\UserUpdateDto;
+use App\UserModule\Event\UserUpdatedEvent;
 use App\UserModule\Exception\UserNotFoundException;
 use App\UserModule\Exception\ValidationException;
 use App\UserModule\Impl\InMemory\Hydrator;
@@ -13,6 +14,7 @@ use App\UserModule\Impl\InMemory\UserRepositoryWrite;
 use App\UserModule\Validation\UserValidator;
 use App\UserModule\Validation\ValidatorsCollection;
 use DateTimeImmutable;
+use PHPUnit\Framework\Constraint\IsInstanceOf;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
@@ -20,6 +22,7 @@ class UserModuleTest extends TestCase
 {
     private UserRepositoryRead $sutRead;
     private UserRepositoryWrite $sutWrite;
+    private EventDispatcherInterface $eventDispatcher;
 
     protected function setUp(): void
     {
@@ -31,10 +34,10 @@ class UserModuleTest extends TestCase
         ]);
         $hydrator = new Hydrator();
         $read = new UserRepositoryRead($memory, $hydrator);
-        $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $validatorsCollection = new ValidatorsCollection($read);
         $validator = new UserValidator($validatorsCollection);
-        $write = new UserRepositoryWrite($memory, $eventDispatcher, $validator, $hydrator);
+        $write = new UserRepositoryWrite($memory, $this->eventDispatcher, $validator, $hydrator);
 
         $this->sutRead = $read;
         $this->sutWrite = $write;
@@ -97,6 +100,8 @@ class UserModuleTest extends TestCase
     ): void {
         if (!$isSuccess) {
             $this->expectException(ValidationException::class);
+        } else {
+            $this->eventDispatcher->expects($this->once())->method('dispatch')->with(new IsInstanceOf(UserUpdatedEvent::class));
         }
         $result = $this->sutWrite->update($id, $data);
         if ($isSuccess) {
