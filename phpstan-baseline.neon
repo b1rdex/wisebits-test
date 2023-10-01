@@ -1,0 +1,11 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Callable callable\\(mixed, App\\\\UserModule\\\\Dto\\\\UserViewDto\\|null, array\\<string, mixed\\>\\)\\: bool invoked with 1 parameter, 3 required\\.$#"
+			count: 14
+			path: tests/UserModule/Validation/ValidatorsCollectionTest.php
+
+		-
+			message: "#^Callable callable\\(mixed, App\\\\UserModule\\\\Dto\\\\UserViewDto\\|null, array\\<string, mixed\\>\\)\\: bool invoked with 2 parameters, 3 required\\.$#"
+			count: 2
+			path: tests/UserModule/Validation/ValidatorsCollectionTest.php

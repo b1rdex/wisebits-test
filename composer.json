@@ -62,7 +62,8 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
-        ]
+        ],
+        "test": ["bin/console lint:container", "phpstan", "bin/phpunit"]
     },
     "conflict": {
         "symfony/symfony": "*"

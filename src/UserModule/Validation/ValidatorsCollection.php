@@ -41,7 +41,14 @@ readonly class ValidatorsCollection
             }),
             'Must not use banned words' => $this->createStringValidator(function (string $value) {
                 // todo: тут можно подключить внешний сервис и проверять через него
-                return !in_array($value, ['some', 'banned', 'words'], true);
+                $banned = ['some', 'banned', 'words'];
+                foreach ($banned as $word) {
+                    if (str_contains($value, $word)) {
+                        return false;
+                    }
+                }
+
+                return true;
             }),
             'Must be unique' => $this->createUniqueNameValidator(),
         ];
@@ -58,7 +65,12 @@ readonly class ValidatorsCollection
             }),
             'Must not use banned domains' => $this->createStringValidator(function (string $value) {
                 // todo: тут можно подключить внешний сервис и проверять через него
-                return !in_array($value, ['some', 'banned', 'domains'], true);
+                $banned = ['some.com', 'banned.com', 'domains.com'];
+                $domain = parse_url('mailto://' . $value, PHP_URL_HOST);
+                if ($domain === false) {
+                    return false;
+                }
+                return !in_array($domain, $banned, true);
             }),
             'Must be unique' => $this->createUniqueEmailValidator(),
         ];

@@ -11,3 +11,12 @@
 ### Заметки
 
 Очевидно, самая сложная часть данной системы – валидация. В данном решении валидация описана в `ValidatorsCollection`, которую применяет `UserValidator`.
+
+Для `ValidatorsCollection` написан юнит-тест `ValidatorsCollectionTest`.
+
+### Запуск тестов
+
+```shell
+composer install
+composer test
+```
