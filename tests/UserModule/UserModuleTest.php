@@ -15,6 +15,7 @@ use App\UserModule\Validation\UserValidator;
 use App\UserModule\Validation\ValidatorsCollection;
 use DateTimeImmutable;
 use PHPUnit\Framework\Constraint\IsInstanceOf;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
@@ -22,6 +23,7 @@ class UserModuleTest extends TestCase
 {
     private UserRepositoryRead $sutRead;
     private UserRepositoryWrite $sutWrite;
+    /** @var MockObject&EventDispatcherInterface */
     private EventDispatcherInterface $eventDispatcher;
 
     protected function setUp(): void
@@ -123,7 +125,7 @@ class UserModuleTest extends TestCase
     }
 
     /**
-     * @return iterable<array{bool, string, string, DateTimeImmutable, ?DateTimeImmutable, ?string}>
+     * @return iterable<array{bool, int, UserUpdateDto}>
      */
     public function provideUpdate(): iterable
     {
@@ -134,5 +136,7 @@ class UserModuleTest extends TestCase
         yield 'success 1' => [true, 13, (new UserUpdateDto())->withName('name8charsxxx')];
         yield 'success 2' => [true, 13, (new UserUpdateDto())->withEmail('email1xxx@example.com')];
         yield 'success 3' => [true, 13, (new UserUpdateDto())->withDeleted(new DateTimeImmutable('+1 sec'))->withNotes('deleted by admin')];
+
+        yield 'success 4 same name and email' => [true, 13, (new UserUpdateDto())->withName('name8chars2')->withEmail('email2@example.com')->withDeleted(null)];
     }
 }
